@@ -1,0 +1,75 @@
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+pnpm-debug.log*
+
+# ── Lockfiles (ignore old ones if migrating) ─────────────────
+package-lock.json
+yarn.lock
+
+# ── Build output ──────────────────────────────────────────────
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# ── Framework-specific ───────────────────────────────────────
+.next/
+.nuxt/
+.parcel-cache/
+.cache/
+.turbo/
+.vercel/
+.wrangler/
+
+# ── Environment ───────────────────────────────────────────────
+.env
+.env.*
+.env.local
+.env.*.local
+*.local.json
+!.env.example
+
+# ── Logs & coverage ───────────────────────────────────────────
+logs/
+*.log
+coverage/
+.nyc_output/
+*.lcov
+
+# ── Caches ────────────────────────────────────────────────────
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# ── IDE / OS ──────────────────────────────────────────────────
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ── Misc ──────────────────────────────────────────────────────
+*.tgz
+node_modules/**/.cache
+
+
+
+# ──────────────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+.next/
+dist/
+build/
+coverage/
+
+.env
+.env.*
+!.env.example
+
+*.log
+
+.DS_Store
+Thumbs.db
