@@ -11,8 +11,9 @@
     "rootDir": "src",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "types": ["node"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "api/drizzle.config.ts"],
   "exclude": ["node_modules", "dist"]
 }
