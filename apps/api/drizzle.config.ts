@@ -1,9 +1,14 @@
-/// <reference types="node" />
-import "dotenv/config";
+import dotenv from "dotenv";
+import { resolve } from "node:path";
+
+dotenv.config({
+  path: resolve(process.cwd(), "../../.env"),
+});
+
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema: "./src/db/schema/*",
+  schema: "./src/db/schema/index.ts",
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {
