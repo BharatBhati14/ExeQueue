@@ -20,6 +20,8 @@
   "dependencies": {
     "@exequeue/config": "workspace:*",
     "@exequeue/types": "workspace:*",
-    "@exequeue/validation": "workspace:*"
+    "@exequeue/validation": "workspace:*",
+    "bullmq": "^6.3.11",
+    "ioredis": "^6.0.0"
   }
 }
