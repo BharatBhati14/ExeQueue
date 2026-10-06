@@ -17,6 +17,7 @@ export const jobStatusEnum = pgEnum("job_status", [
   "FAILED",
   "RETRYING",
   "DEAD_LETTER",
+  "CANCELLED"
 ]);
 
 export const jobPriorityEnum = pgEnum("job_priority", [
