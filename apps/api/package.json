@@ -15,6 +15,7 @@
   "type": "module",
   "dependencies": {
     "@exequeue/config": "workspace:*",
+    "@exequeue/db": "workspace:*",
     "@exequeue/types": "workspace:*",
     "@exequeue/validation": "workspace:*",
     "@fastify/cors": "^11.3.0",

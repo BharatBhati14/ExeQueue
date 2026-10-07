@@ -1,6 +1,5 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { db } from "../../db/index.js";
-import { jobs } from "../../db/schema/jobs.js";
+import { db, jobs } from "@exequeue/db";
 import type { CreateJobInput } from "@exequeue/validation";
 
 export async function createJob(input: CreateJobInput) {
@@ -51,7 +50,9 @@ export async function retryJob(id: string) {
       startedAt: null,
       completedAt: null,
     })
-    .where(and(eq(jobs.id, id), inArray(jobs.status, ["FAILED", "DEAD_LETTER"])))
+    .where(
+      and(eq(jobs.id, id), inArray(jobs.status, ["FAILED", "DEAD_LETTER"])),
+    )
     .returning();
 
   return job ?? null;

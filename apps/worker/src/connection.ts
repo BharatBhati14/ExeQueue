@@ -1,5 +1,5 @@
 import { Redis } from "ioredis";
-import { env } from "./lib/env.js";
+import { env } from "@exequeue/config";
 
 export const connection = new Redis({
   host: env.REDIS_HOST,

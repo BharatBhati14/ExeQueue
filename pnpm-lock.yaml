@@ -171,6 +171,9 @@ importers:
       '@exequeue/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@exequeue/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@exequeue/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -260,6 +263,9 @@ importers:
       '@exequeue/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@exequeue/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@exequeue/types':
         specifier: workspace:*
         version: link:../../packages/types
@@ -287,7 +293,33 @@ importers:
         version: 7.0.2
 
   packages/config:
+    dependencies:
+      dotenv:
+        specifier: ^18.0.5
+        version: 18.0.5
     devDependencies:
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+
+  packages/db:
+    dependencies:
+      '@exequeue/config':
+        specifier: workspace:*
+        version: link:../config
+      dotenv:
+        specifier: ^18.0.5
+        version: 18.0.5
+      drizzle-orm:
+        specifier: ^0.45.3
+        version: 0.45.3(postgres@3.4.9)
+      postgres:
+        specifier: ^3.4.9
+        version: 3.4.9
+    devDependencies:
+      drizzle-kit:
+        specifier: ^0.31.11
+        version: 0.31.11
       typescript:
         specifier: ^7.0.2
         version: 7.0.2

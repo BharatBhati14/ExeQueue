@@ -1,5 +1,5 @@
 import Fastify from "fastify";
-import { db } from "./db/index.js";
+import { db } from "@exequeue/db";
 import { sql } from "drizzle-orm";
 import { jobRoutes } from "./features/jobs/job.route.js";
 

@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@exequeue/config": "workspace:*",
+    "@exequeue/db": "workspace:*",
     "@exequeue/types": "workspace:*",
     "@exequeue/validation": "workspace:*",
     "bullmq": "^6.3.11",

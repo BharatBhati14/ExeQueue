@@ -1,6 +1,7 @@
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
-import { env } from "../lib/env.js";
+import { env } from "@exequeue/config/src/index.js";
+export * from "./schema/index.js";
 
 const databaseUrl = env.DATABASE_URL;
 

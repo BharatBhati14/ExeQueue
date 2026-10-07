@@ -1,5 +1,4 @@
-import { db } from "./index.js";
-import { queues } from "./schema/queues.js";
+import { db, queues } from "@exequeue/db";
 
 async function seed() {
   const [queue] = await db
