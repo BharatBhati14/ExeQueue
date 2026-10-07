@@ -1,5 +1,5 @@
 import { Redis } from "ioredis";
-import { env } from "../lib/env.js";
+import { env } from "@exequeue/config";
 
 // Create a reusable Redis connection instance for BullMQ
 export const connection = new Redis({

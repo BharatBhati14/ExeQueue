@@ -25,15 +25,6 @@ export async function jobRoutes(app: FastifyInstance) {
 
     const job = await createJob(result.data);
 
-    // const jobInQueue =
-    await defaultQueue.add(job.type, {
-      jobId: job.id,
-      type: job.type,
-      payload: job.payload,
-    });
-
-    // console.log("Job added, id =", jobInQueue);
-
     return reply.status(201).send({
       data: job,
     });

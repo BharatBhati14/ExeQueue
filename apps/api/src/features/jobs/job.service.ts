@@ -1,6 +1,7 @@
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { db, jobs } from "@exequeue/db";
 import type { CreateJobInput } from "@exequeue/validation";
+import { defaultQueue } from "../../queue/queues.js";
 
 export async function createJob(input: CreateJobInput) {
   const [job] = await db
@@ -15,6 +16,25 @@ export async function createJob(input: CreateJobInput) {
       scheduledAt: input.scheduledAt,
     })
     .returning();
+
+  // const jobInQueue =
+  await defaultQueue.add(
+    job.type,
+    {
+      jobId: job.id,
+      type: job.type,
+      payload: job.payload,
+    },
+    {
+      attempts: job.maxAttempts,
+      backoff: {
+        type: "exponential",
+        delay: 2000,
+      },
+    },
+  );
+
+  // console.log("Job added, id = ", jobInQueue);
 
   return job;
 }
