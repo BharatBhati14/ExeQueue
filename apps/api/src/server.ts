@@ -1,10 +1,18 @@
 import Fastify from "fastify";
+import cors from "@fastify/cors";
+
 import { db } from "@exequeue/db";
 import { sql } from "drizzle-orm";
 import { jobRoutes } from "./features/jobs/job.route.js";
+import { env } from "@exequeue/config";
 
 const fastify = Fastify({
   logger: true,
+});
+
+await fastify.register(cors, {
+  origin: env.NEXT_PUBLIC_API_URL,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 });
 
 fastify.get("/", (request, reply) => {

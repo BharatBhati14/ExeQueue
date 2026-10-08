@@ -1,25 +1,48 @@
 import { Job, Worker } from "bullmq";
 import { connection } from "./connection.js";
-import { db, jobs } from "@exequeue/db";
+import { db, jobAttempts, jobLogs, jobs } from "@exequeue/db";
 import { eq } from "drizzle-orm";
 
 const worker = new Worker(
   "default",
   async (job: Job) => {
     const dbJobId = job.data.jobId;
+    const attemptNumber = job.attemptsMade + 1;
 
     console.log(
       `[Worker] Processing job ${job.id} & (DB ID: ${dbJobId}) of type "${job.name}"...`,
     );
+
+    const [attempt] = await db
+      .insert(jobAttempts)
+      .values({
+        jobId: dbJobId,
+        attemptNumber,
+        status: "RUNNING",
+        startedAt: new Date(),
+      })
+      .returning();
 
     await db
       .update(jobs)
       .set({ status: "RUNNING", startedAt: new Date() })
       .where(eq(jobs.id, dbJobId));
 
+    await db.insert(jobLogs).values({
+      jobId: dbJobId,
+      attemptId: attempt.id,
+      level: "INFO",
+      message: `[Attempt ${attemptNumber}] Worker started executing job type: ${job.name}`,
+    });
+
     try {
       // simulate worker
       await new Promise((resolve) => setTimeout(resolve, 5000));
+
+      await db
+        .update(jobAttempts)
+        .set({ status: "COMPLETED", completedAt: new Date() })
+        .where(eq(jobAttempts.id, attempt.id));
 
       // update status to COMPLETED
       await db
@@ -27,15 +50,39 @@ const worker = new Worker(
         .set({ status: "COMPLETED", completedAt: new Date() })
         .where(eq(jobs.id, dbJobId));
 
+      await db.insert(jobLogs).values({
+        jobId: dbJobId,
+        level: "INFO",
+        message: `[Attempt ${attemptNumber}] Job completed successfully.`,
+      });
+
       console.log(`[Worker] Successfully Completed job ${job.id} & ${dbJobId}`);
 
       return { success: true };
     } catch (error: any) {
+      const isDeadLetter = attemptNumber >= (job.opts.attempts || 3);
+      const finalStatus = isDeadLetter ? "DEAD_LETTER" : "FAILED";
+
+      await db
+        .update(jobAttempts)
+        .set({
+          status: "FAILED",
+          completedAt: new Date(),
+          error: error.message,
+        })
+        .where(eq(jobAttempts.id, attempt.id));
+
       // update status to FAILED
       await db
         .update(jobs)
         .set({ status: "FAILED", failedAt: new Date() })
         .where(eq(jobs.id, dbJobId));
+
+      await db.insert(jobLogs).values({
+        jobId: dbJobId,
+        level: "ERROR",
+        message: `[Attempt ${attemptNumber}] Failed with error: ${error.message}`,
+      });
 
       console.error(`[Worker] Job ${dbJobId} failed:`, error.message);
       throw error;
