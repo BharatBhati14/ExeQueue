@@ -1,7 +1,53 @@
 import { Job, Worker } from "bullmq";
 import { connection } from "./connection.js";
-import { db, jobAttempts, jobLogs, jobs } from "@exequeue/db";
+import { db, jobAttempts, jobLogs, jobs, workers } from "@exequeue/db";
 import { eq } from "drizzle-orm";
+import { randomUUID } from "crypto";
+
+const workerId = `worker-${randomUUID().slice(0, 8)}`;
+let heartbeatInterval: NodeJS.Timeout;
+
+async function registerWorker() {
+  console.log(`[Worker] Registering worker node: ${workerId}`);
+  await db.insert(workers).values({
+    id: workerId,
+    name: workerId,
+    status: "ONLINE",
+    lastHeartbeat: new Date(),
+  });
+
+  // Send heartbeat every 10 seconds
+  heartbeatInterval = setInterval(async () => {
+    try {
+      await db
+        .update(workers)
+        .set({ lastHeartbeat: new Date(), status: "ONLINE" })
+        .where(eq(workers.id, workerId));
+      console.log(`[Worker] Heartbeat sent for ${workerId}`);
+    } catch (err) {
+      console.error("[Worker] Failed to send heartbeat:", err);
+    }
+  }, 10000);
+}
+
+async function shutdownWorker() {
+  console.log(`[Worker] Shutting down worker node: ${workerId}`);
+  clearInterval(heartbeatInterval);
+  try {
+    await db
+      .update(workers)
+      .set({ status: "OFFLINE", lastHeartbeat: new Date() })
+      .where(eq(workers.id, workerId));
+  } catch (err) {
+    console.error("[Worker] Error during shutdown update:", err);
+  }
+  process.exit(0);
+}
+
+process.on("SIGINT", shutdownWorker);
+process.on("SIGTERM", shutdownWorker);
+
+await registerWorker();
 
 const worker = new Worker(
   "default",
