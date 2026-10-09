@@ -1,6 +1,6 @@
 // import { env } from "@exequeue/config/src/lib/env";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export async function fetchJobs() {
   const res = await fetch(`${API_URL}/api/jobs`, { cache: "no-store" });

@@ -7,6 +7,8 @@ import {
   listJobs,
   retryJob,
 } from "./job.service.js";
+import { db, jobAttempts, jobLogs, jobs } from "@exequeue/db";
+import { eq } from "drizzle-orm";
 
 export async function jobRoutes(app: FastifyInstance) {
   /**
@@ -93,5 +95,31 @@ export async function jobRoutes(app: FastifyInstance) {
     }
 
     return reply.status(200).send({ data: job });
+  });
+
+  // Get job details along with its attempts and logs
+  app.get("/api/jobs/:id/details", async (request, reply) => {
+    const { id } = request.params as { id: string };
+
+    const [job] = await db.select().from(jobs).where(eq(jobs.id, id));
+    if (!job) {
+      return reply.status(404).send({ success: false, error: "Job not found" });
+    }
+
+    const attempts = await db
+      .select()
+      .from(jobAttempts)
+      .where(eq(jobAttempts.jobId, id));
+
+    const logs = await db.select().from(jobLogs).where(eq(jobLogs.jobId, id));
+
+    return reply.send({
+      success: true,
+      data: {
+        job,
+        attempts,
+        logs,
+      },
+    });
   });
 }
