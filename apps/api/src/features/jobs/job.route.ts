@@ -7,7 +7,6 @@ import {
   listJobs,
   retryJob,
 } from "./job.service.js";
-import { defaultQueue } from "../../queue/queues.js";
 
 export async function jobRoutes(app: FastifyInstance) {
   /**
