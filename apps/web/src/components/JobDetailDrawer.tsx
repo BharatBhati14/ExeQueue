@@ -28,102 +28,151 @@ export default function JobDetailDrawer({
   if (!jobId) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex justify-end z-50">
-      <div className="w-full max-w-xl bg-white dark:bg-zinc-900 h-full p-6 shadow-2xl overflow-y-auto flex flex-col justify-between">
+    <div className="fixed inset-0 bg-slate-900/30 backdrop-blur-sm flex justify-end z-50 transition-opacity">
+      <div className="w-full max-w-xl bg-white h-full p-6 shadow-xl border-l border-slate-200 overflow-y-auto flex flex-col justify-between">
         <div>
-          <div className="flex justify-between items-center mb-6 border-b pb-4">
-            <h2 className="text-xl font-bold">Job Execution Details</h2>
+          {/* Header */}
+          <div className="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">
+                Job Execution Audit
+              </h2>
+              <p className="text-xs text-slate-500 font-mono mt-0.5">
+                ID: {jobId}
+              </p>
+            </div>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-black dark:hover:text-white text-lg font-bold"
+              className="text-slate-400 hover:text-slate-700 text-sm font-semibold p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
             >
               ✕
             </button>
           </div>
 
           {loading ? (
-            <p className="text-gray-500">Loading audit trail...</p>
+            <div className="flex items-center space-x-2 text-slate-500 text-sm py-8">
+              <span className="w-2 h-2 bg-blue-600 rounded-full animate-ping"></span>
+              <span>Loading audit trail...</span>
+            </div>
           ) : details ? (
             <div className="space-y-6">
-              {/* Job Info */}
-              <div className="bg-gray-50 dark:bg-zinc-800 p-4 rounded-lg space-y-2">
-                <p>
-                  <strong>ID:</strong> {details.job.id}
-                </p>
-                <p>
-                  <strong>Type:</strong> {details.job.type}
-                </p>
-                <p>
-                  <strong>Status:</strong>{" "}
-                  <span className="px-2 py-0.5 rounded text-xs bg-blue-100 text-blue-800">
+              {/* Job Metadata Summary */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2.5 text-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Job Type
+                  </span>
+                  <span className="font-semibold text-slate-900">
+                    {details.job.type}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Status
+                  </span>
+                  <span
+                    className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                      details.job.status === "COMPLETED"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : details.job.status === "FAILED" ||
+                            details.job.status === "DEAD_LETTER"
+                          ? "bg-rose-50 text-rose-700 border border-rose-200"
+                          : "bg-blue-50 text-blue-700 border border-blue-200"
+                    }`}
+                  >
                     {details.job.status}
                   </span>
-                </p>
-                <p>
-                  <strong>Attempts Made:</strong> {details.job.attempts}
-                </p>
-              </div>
-
-              {/* Attempts Timeline */}
-              <div>
-                <h3 className="font-semibold mb-2">Execution Attempts</h3>
-                <div className="space-y-2">
-                  {details.attempts.map((att: any) => (
-                    <div
-                      key={att.id}
-                      className="border p-3 rounded text-sm dark:border-zinc-700"
-                    >
-                      <div className="flex justify-between font-medium">
-                        <span>Attempt #{att.attemptNumber}</span>
-                        <span
-                          className={
-                            att.status === "COMPLETED"
-                              ? "text-green-600"
-                              : "text-red-600"
-                          }
-                        >
-                          {att.status}
-                        </span>
-                      </div>
-                      {att.error && (
-                        <p className="text-red-500 mt-1 text-xs">
-                          Error: {att.error}
-                        </p>
-                      )}
-                    </div>
-                  ))}
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Attempts
+                  </span>
+                  <span className="font-mono text-xs font-medium text-slate-700">
+                    {details.job.attempts}
+                  </span>
                 </div>
               </div>
 
-              {/* Execution Logs */}
+              {/* Execution Attempts Timeline */}
               <div>
-                <h3 className="font-semibold mb-2">Stdout / Logs</h3>
-                <div className="bg-black text-green-400 font-mono text-xs p-4 rounded h-48 overflow-y-auto space-y-1">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+                  Execution Attempts History
+                </h3>
+                {details.attempts.length === 0 ? (
+                  <p className="text-xs text-slate-400 italic">
+                    No attempts recorded yet.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {details.attempts.map((att: any) => (
+                      <div
+                        key={att.id}
+                        className="border border-slate-200 rounded-lg p-3 text-sm bg-white shadow-sm"
+                      >
+                        <div className="flex justify-between items-center font-medium">
+                          <span className="text-xs text-slate-700 font-semibold">
+                            Attempt #{att.attemptNumber}
+                          </span>
+                          <span
+                            className={`text-xs font-semibold ${
+                              att.status === "COMPLETED"
+                                ? "text-emerald-600"
+                                : "text-rose-600"
+                            }`}
+                          >
+                            {att.status}
+                          </span>
+                        </div>
+                        {att.error && (
+                          <div className="mt-2 text-xs font-mono bg-rose-50 text-rose-700 p-2 rounded border border-rose-200">
+                            Error: {att.error}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Execution Logs Terminal */}
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-3">
+                  Execution Output / Stdout
+                </h3>
+                <div className="bg-slate-900 text-emerald-400 font-mono text-xs p-4 rounded-xl h-52 overflow-y-auto space-y-1.5 shadow-inner">
                   {details.logs.map((log: any) => (
-                    <div key={log.id}>
-                      <span className="text-gray-500">
+                    <div key={log.id} className="leading-relaxed">
+                      <span className="text-slate-500 select-none">
                         [{new Date(log.createdAt).toLocaleTimeString()}]
                       </span>{" "}
-                      [{log.level}] {log.message}
+                      <span className="text-sky-400">[{log.level}]</span>{" "}
+                      <span className="text-slate-200">{log.message}</span>
                     </div>
                   ))}
                   {details.logs.length === 0 && (
-                    <span className="text-gray-500">No logs recorded yet.</span>
+                    <span className="text-slate-500 italic">
+                      No console output captured yet.
+                    </span>
                   )}
                 </div>
               </div>
             </div>
           ) : (
-            <p className="text-red-500">Failed to load details.</p>
+            <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs">
+              Failed to load audit trail details.
+            </div>
           )}
         </div>
 
-        <button
-          onClick={onClose}
-          className="mt-6 w-full bg-gray-200 dark:bg-zinc-800 py-2 rounded font-medium hover:bg-gray-300"
-        >
-          Close Drawer
-        </button>
+        {/* Footer */}
+        <div className="pt-4 border-t border-slate-200 mt-6">
+          <button
+            onClick={onClose}
+            className="w-full bg-slate-300 hover:bg-slate-400 text-slate-800 text-sm font-medium py-2 rounded-lg transition-colors"
+          >
+            Close Drawer
+          </button>
+        </div>
       </div>
     </div>
   );

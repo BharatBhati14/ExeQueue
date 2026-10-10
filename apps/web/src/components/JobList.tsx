@@ -41,7 +41,7 @@ export default function JobList({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow border overflow-hidden">
+    <div className="bg-white rounded-lg shadow border overflow-hidden mb-20">
       <div className="p-4 border-b flex justify-between items-center">
         <h2 className="text-lg font-semibold text-gray-800">Job Queue Feed</h2>
         <button
@@ -67,19 +67,21 @@ export default function JobList({
               <tr
                 key={job.id}
                 onClick={() => setSelectedJobId(job.id)}
-                className="cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+                className="cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-200 transition-colors"
               >
                 <td className="px-4 py-3 font-mono text-xs text-gray-500">
                   {job.id.slice(0, 8)}...
                 </td>
                 <td className="px-4 py-3 text-gray-800">{job.type}</td>
                 <td className="px-4 py-3">
-                  <span className="px-2 py-1 rounded text-xs font-semibold bg-blue-100 text-blue-800">
+                  <span
+                    className={`px-2 py-1 rounded text-xs font-semibold ${statusColors[job.status]}`}
+                  >
                     {job.status}
                   </span>
                 </td>
                 <td className="p-3 text-gray-600">
-                  {job.attempts} / {job.maxAttempts}
+                  {job.attempts + 1} / {job.maxAttempts}
                 </td>
                 <td className="p-3 space-x-2">
                   {job.status === "QUEUED" && (

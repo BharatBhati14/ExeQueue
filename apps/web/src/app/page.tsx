@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import CreateJobForm from "@/components/CreateJobForm";
 import JobList from "@/components/JobList";
+import Navbar from "@/components/Navbar";
 import { fetchJobs } from "@/lib/api";
 
 export default function Dashboard() {
@@ -22,32 +23,36 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadJobs();
-    const interval = setInterval(loadJobs, 5000); // Polling every 5s for live updates
+    const interval = setInterval(loadJobs, 5000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <main className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <header className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">
-            ExeQueue Dashboard
-          </h1>
-          <span className="text-sm text-green-600 font-semibold flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
-            System Online
-          </span>
-        </header>
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <Navbar />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-1">
-            <CreateJobForm onJobCreated={loadJobs} />
+      <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        <div className="border-b border-slate-200 pb-5">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            Job Orchestration
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Monitor, execute, and debug asynchronous background tasks in
+            real-time.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              <CreateJobForm onJobCreated={loadJobs} />
+            </div>
           </div>
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2">
             <JobList jobs={jobs} onRefresh={loadJobs} />
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
   );
 }
