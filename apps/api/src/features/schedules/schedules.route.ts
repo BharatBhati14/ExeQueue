@@ -3,6 +3,11 @@ import { db, schedules } from "@exequeue/db";
 import { defaultQueue as queue } from "../../queue/queues.js";
 
 export async function scheduleRoutes(fastify: FastifyInstance) {
+  fastify.get("/api/schedules", async (request, reply) => {
+    const allSchedules = await db.select().from(schedules);
+    return reply.send({ success: true, data: allSchedules });
+  });
+
   // Create a recurring schedule
   fastify.post("/api/schedules", async (request, reply) => {
     const { queueId, name, cron, payload } = request.body as {
@@ -21,6 +26,7 @@ export async function scheduleRoutes(fastify: FastifyInstance) {
         payload,
         cronExpression: cron,
         enabled: true,
+        lastRunAt: new Date(),
       })
       .returning();
 

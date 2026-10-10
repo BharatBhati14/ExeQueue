@@ -10,7 +10,7 @@ let heartbeatInterval: NodeJS.Timeout;
 async function registerWorker() {
   console.log(`[Worker] Registering worker node: ${workerId}`);
   await db.insert(workers).values({
-    id: workerId,
+    // id: workerId,
     name: workerId,
     status: "ONLINE",
     lastHeartbeat: new Date(),
@@ -83,7 +83,7 @@ const worker = new Worker(
 
     try {
       // simulate worker
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       await db
         .update(jobAttempts)
